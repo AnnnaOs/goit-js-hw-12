@@ -1,3 +1,6 @@
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+
 export function createMarkup(arr) {
   return arr
     .map(
@@ -40,4 +43,12 @@ export function createMarkup(arr) {
         </li>`
     )
     .join('');
+}
+
+export function showErrorMsg(errorMessage) {
+  iziToast.error({
+    title: '',
+    message: errorMessage,
+    position: 'topRight',
+  });
 }
