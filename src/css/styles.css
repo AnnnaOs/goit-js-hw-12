@@ -51,7 +51,7 @@ img {
 }
 
 .gallery-section {
-  max-width: 1200px;
+  max-width: 1160px;
   margin: 0 auto;
   padding: 16px;
 }
@@ -112,7 +112,7 @@ img {
 }
 
 .gallery-item {
-  width: calc((100% - 48) / 3);
+  width: calc((100% - 48px) / 3);
   border: 1px solid #808080;
   border-radius: 4px;
   overflow: hidden;
