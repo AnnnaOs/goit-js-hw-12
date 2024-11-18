@@ -1,9 +1,7 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
-
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-
 import { getImages } from './js/pixabay-api.js';
 import { createMarkup, showErrorMsg } from './js/render-functions.js';
 import { onTopBtn } from './js/on-top-btn.js';
@@ -14,46 +12,40 @@ const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const loadMore = document.querySelector('.load-more');
 
-form.addEventListener('submit', onSearch);
-loadMore.addEventListener('click', onLoadMore);
-
-onTopBtn();
-
-loadMore.style.display = 'none';
-loader.style.display = 'none';
-const perPage = 15;
-let page = 1;
-let query = '';
-let simpleLightbox = new SimpleLightbox('.gallery a', {
-  captions: true,
+const simpleLightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
 });
+const perPage = 15;
+let page = 1;
+let query = '';
+
+loadMore.style.display = 'none';
+loader.style.display = 'none';
+
+onTopBtn();
+
+form.addEventListener('submit', onSearch);
+loadMore.addEventListener('click', onLoadMore);
 
 async function onSearch(event) {
   event.preventDefault();
-  page = 1;
+  query = input.value.trim();
+
+  if (!query) {
+    return showErrorMsg('Please enter a search query!');
+  }
+
   gallery.innerHTML = '';
   loader.style.display = 'block';
-  loadMore.style.display = 'none';
-
-  query = input.value.trim();
-  if (!query) {
-    showErrorMsg('Please enter a search query!');
-
-    loadMore.style.display = 'none';
-    loader.style.display = 'none';
-    return;
-  }
 
   try {
     const data = await getImages(query, page, perPage);
+
     if (!data.hits.length) {
-      showErrorMsg(
+      return showErrorMsg(
         'Sorry, there are no images matching your search query. Please try again!'
       );
-      loader.style.display = 'none';
-      return;
     }
 
     if (data.hits.length < 15) {
@@ -74,11 +66,10 @@ async function onSearch(event) {
 
 async function onLoadMore() {
   page += 1;
+  loadMore.style.display = 'none';
+  loader.style.display = 'block';
 
   try {
-    loadMore.style.display = 'none';
-    loader.style.display = 'block';
-
     const data = await getImages(query, page, perPage);
     gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits));
     simpleLightbox.refresh();
@@ -94,7 +85,6 @@ async function onLoadMore() {
     }
 
     if (data.totalHits <= Math.ceil(page * perPage)) {
-      loadMore.style.display = 'none';
       showErrorMsg(
         `We're sorry, but you've reached the end of search results.`
       );
